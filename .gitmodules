@@ -1,0 +1,3 @@
+[submodule "lib/Color_console_output"]
+	path = lib/Color_console_output
+	url = https://github.com/dmitry131131/Color_console_output.git
