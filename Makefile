@@ -15,12 +15,12 @@ TARGET = tree
 SourcePrefix = src/
 BuildPrefix = build/
 BuildFolder = build
-Include = -Iinclude -Ilib/Color_console_output/include
+Include = -Iinclude -Ilib/Color_console_output/include -Ilib/Data_buffer/include
 
 Sources = Tree.cpp TreeErrors.cpp
 Main = main.cpp
 
-Libs = -Llib/Color_console_output/build/ -lColor_output
+Libs = -Llib/Color_console_output/build/ -lColor_output -Llib/Data_buffer/build/ -lDataBuffer
 
 Source = $(addprefix $(SourcePrefix), $(Sources))
 MainObject = $(patsubst %.cpp, $(BuildPrefix)%.o, $(Main))
@@ -33,6 +33,7 @@ all : prepare folder $(TARGET)
 
 prepare: 
 	cd lib/Color_console_output && make
+	cd lib/Data_buffer          && make
 
 $(BuildPrefix)%.o : $(SourcePrefix)%.cpp
 	@echo [CXX] -c $< -o $@
@@ -44,6 +45,7 @@ $(TARGET) : $(objects) $(MainObject)
 
 clean :
 	cd lib/Color_console_output && make clean
+	cd lib/Data_buffer && make clean
 	rm $(BuildFolder)/*.o
 	rm $(TARGET)
 
