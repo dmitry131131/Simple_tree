@@ -1,80 +1,80 @@
 #include <stdio.h>
+#include <assert.h>
 
+#include "TreeErrors.h"
+#include "DataBuffer.h"
+#include "Tree.h"
+#include "TreeLog.h"
 
+static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment* segment, TreeSegment* call_segment);
 
-listErrorCode write_dot_header(outputBuffer* buffer)
+treeErrorCode write_dot_header(outputBuffer* buffer)
 {
     assert(buffer);
 
     print_to_buffer(buffer, "digraph G{\n"
-                            "rankdir = LR;\n"
+                            "rankdir = TB;\n"
                             "bgcolor = \"#FFEFD5\";\n"
                             "node[color = \"#800000\", fontsize = 10];\n"
                             "edge[color = \"#800000\", fontsize = 15];\n\n");
 
-    return NO_LIST_ERRORS;
+    return NO_TREE_ERRORS;
 }
 
-listErrorCode write_dot_body(outputBuffer* buffer, ListData* list)
+treeErrorCode write_dot_body(outputBuffer* buffer, TreeData* tree)
 {
     assert(buffer);
-    assert(list);
+    assert(tree);
 
-    /*
-    for (size_t i = 0; i < list->capacity - 1; i++)
-    {
-        print_to_buffer(buffer, "%lu -> ", i);
-    }
-    print_to_buffer(buffer, "%lu [weight = 10000, color = \"#FFEFD5\"];\n\n", list->capacity - 1);
-    */
+    write_dot_elem_recursive(buffer, tree->root, tree->root);
 
-    for (size_t i = 0; i < list->capacity; i++)
-    {
-        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
-                                "\" IP: %lu | DATA: %d | NEXT: %ld | PERV: %ld \"];\n", i, i, list->data[i],
-                                 list->next[i], list->prev[i]);
-    }
-
-    print_to_buffer(buffer, "\n");
-
-    ssize_t adress = 0;
-    for (size_t i = 0; i < list->len; i++)
-    {
-        print_to_buffer(buffer, "%ld -> %ld [weight = 1, color = \"#0000ff\"];\n", adress, list->next[adress]);
-        adress = list->next[adress];
-    }
-
-    adress = list->tail;
-    for (size_t i = 0; i < list->len; i++)
-    {
-        print_to_buffer(buffer, "%ld -> %ld [weight = 1, color = \"#00ff00\"];\n", adress, list->prev[adress]);
-        adress = list->prev[adress];
-    }
-
-    adress = list->free;
-    for (size_t i = 0; i < (list->capacity - list->len); i++)
-    {
-        print_to_buffer(buffer, "%ld -> %ld [weight = 1,color = \"#0000ff\"];\n", adress, list->next[adress]);
-        adress = list->next[adress];
-    }
-
-    return NO_LIST_ERRORS;
+    return NO_TREE_ERRORS;
 }
 
-listErrorCode write_dot_footer(outputBuffer* buffer, ListData* list)
+static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment* segment, TreeSegment* call_segment)
 {
     assert(buffer);
-    assert(list);
+    
+    print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
+                            "\" {DATA: %s | {<fl> LEFT: %p | <fr> RIGHT: %p}} \"];\n",
+                            segment, segment->data, segment->left, segment->right);
+
+    if (segment != call_segment)
+    {
+        if (segment == call_segment->left)
+        {
+            print_to_buffer(buffer, "%lu:<fl> -> %lu [weight = 1, color = \"#0000ff\"];\n", call_segment, segment);
+        }
+        else if (segment == call_segment->right)
+        {
+            print_to_buffer(buffer, "%lu:<fr> -> %lu [weight = 1, color = \"#0000ff\"];\n", call_segment, segment);
+        }
+    }
+
+    if (segment->left)
+    {
+        write_dot_elem_recursive(buffer, segment->left, segment);
+    }
+    if (segment->right)
+    {
+        write_dot_elem_recursive(buffer, segment->right, segment);
+    }
+
+    return NO_TREE_ERRORS;
+}
+
+treeErrorCode write_dot_footer(outputBuffer* buffer, TreeData* tree)
+{
+    assert(buffer);
+    assert(tree);
 
     print_to_buffer(buffer, "All[shape = Mrecord, label = "
-                            "\" HEADER | <f0> Capacity: %lu | <f1> Head: %ld | <f2> Tail: %ld | <f3> Free: %ld \""
+                            "\" HEADER | <f1> ROOT: %p \""
                             ", style = \"filled\", fillcolor = \"#FFF5EE\"];\n",
-                            list->capacity, list->head, list->tail, list->free);
-    print_to_buffer(buffer, "All:<f1> -> %ld [color = \"#000000\"];\n", list->head);
-    print_to_buffer(buffer, "All:<f2> -> %ld [color = \"#000000\"];\n", list->tail);
-    print_to_buffer(buffer, "All:<f3> -> %ld [color = \"#000000\"];\n", list->free);
+                            tree->root);
+    print_to_buffer(buffer, "All:<f1> -> %lu [color = \"#000000\"];\n", tree->root);
 
     print_to_buffer(buffer, "}");
 
-    return NO_LIST_ERRORS;
+    return NO_TREE_ERRORS;
 }

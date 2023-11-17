@@ -21,11 +21,17 @@ int main()
 
     tree.root->left = new_segment(&tree, &error);
 
+    tree.root->right = new_segment(&tree, &error);
+
+    tree.root->right->right = new_segment(&tree, &error);
+
     if (error)
     {
         print_tree_error(error);
         RETURN(error);
     }
+
+    tree_dump(&tree);
 
     RETURN(0);
 

@@ -17,7 +17,7 @@ BuildPrefix = build/
 BuildFolder = build
 Include = -Iinclude -Ilib/Color_console_output/include -Ilib/Data_buffer/include
 
-Sources = Tree.cpp TreeErrors.cpp
+Sources = Tree.cpp TreeErrors.cpp TreeLog.cpp
 Main = main.cpp
 
 Libs = -Llib/Color_console_output/build/ -lColor_output -Llib/Data_buffer/build/ -lDataBuffer

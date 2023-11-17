@@ -5,6 +5,8 @@
 
 #include "TreeErrors.h"
 #include "Tree.h"
+#include "DataBuffer.h"
+#include "TreeLog.h"
 
 static TreeSegment* find_segment_recursive(TreeSegment* segment, const char* data);
 
@@ -81,7 +83,33 @@ treeErrorCode tree_dump(TreeData* tree)
 {
     assert(tree);
 
+    outputBuffer buffer = {};
 
+    buffer_ctor(&buffer, 10000);
+
+    FILE* file = NULL;
+    if (create_output_file(&file, "tree_test.dot", TEXT))
+    {
+        printf("Create error!\n");
+    }
+
+    if (write_dot_header(&buffer))
+    {
+        printf("header error!\n");
+    }
+
+    if (write_dot_body(&buffer, tree))
+    {
+        printf("body error!\n");
+    }
+
+    write_dot_footer(&buffer, tree);
+
+    printf("%lu\n", buffer.bufferPointer);
+
+    write_buffer_to_file(file, &buffer);
+
+    buffer_dtor(&buffer);
 
     return NO_TREE_ERRORS;
 }
