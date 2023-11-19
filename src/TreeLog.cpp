@@ -36,8 +36,8 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
     assert(buffer);
     
     print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
-                            "\" {DATA: %s | {<fl> LEFT: %p | <fr> RIGHT: %p}} \"];\n",
-                            segment, segment->data, segment->left, segment->right);
+                            "\" {DATA: %s | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                            segment, segment->data);
 
     if (segment != call_segment)
     {
@@ -69,7 +69,7 @@ treeErrorCode write_dot_footer(outputBuffer* buffer, TreeData* tree)
     assert(tree);
 
     print_to_buffer(buffer, "All[shape = Mrecord, label = "
-                            "\" HEADER | <f1> ROOT: %p \""
+                            "\" HEADER | <f1> ROOT\""
                             ", style = \"filled\", fillcolor = \"#FFF5EE\"];\n",
                             tree->root);
     print_to_buffer(buffer, "All:<f1> -> %lu [color = \"#000000\"];\n", tree->root);

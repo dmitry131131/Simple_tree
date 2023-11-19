@@ -19,11 +19,11 @@ int main()
         RETURN(error);
     }
 
-    tree.root->left = new_segment(&tree, &error);
+    new_segment(&(tree.root->left), &error);
+    new_segment(&(tree.root->right), &error);
 
-    tree.root->right = new_segment(&tree, &error);
-
-    tree.root->right->right = new_segment(&tree, &error);
+    new_segment(&(tree.root->right->right), &error);
+    new_segment(&(tree.root->right->left), &error);
 
     if (error)
     {

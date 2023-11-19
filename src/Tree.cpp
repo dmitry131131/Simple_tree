@@ -10,11 +10,21 @@
 
 static TreeSegment* find_segment_recursive(TreeSegment* segment, const char* data);
 
+static treeErrorCode tree_verify_recurse(TreeSegment* segment);
+
 treeErrorCode tree_verify(TreeData* tree)
 {
     assert(tree);
 
+
+
     return NO_TREE_ERRORS;
+}
+
+static treeErrorCode tree_verify_recurse(TreeSegment* segment)
+{
+
+    return 
 }
 
 treeErrorCode tree_ctor(TreeData* tree)
@@ -22,7 +32,7 @@ treeErrorCode tree_ctor(TreeData* tree)
     assert(tree);
 
     treeErrorCode error = NO_TREE_ERRORS;
-    tree->root = new_segment(tree, &error);
+    tree->root = new_segment(nullptr, &error);
 
     return error;
 }
@@ -37,10 +47,8 @@ treeErrorCode tree_dtor(TreeData* tree)
     return error;
 }
 
-TreeSegment* new_segment(TreeData* tree, treeErrorCode* error)
+TreeSegment* new_segment(TreeSegment** parent_segment, treeErrorCode* error)
 {
-    assert(tree);
-
     TreeSegment* segment = (TreeSegment*) calloc(1, sizeof(TreeSegment));
     segment->data = (char*) calloc(TREE_SEGMENT_DATA_LEN, sizeof(char));
     if (!segment || !segment->data)
@@ -48,9 +56,20 @@ TreeSegment* new_segment(TreeData* tree, treeErrorCode* error)
         if (error) *error = ALLOC_MEMORY_ERROR; 
     }
 
+    if (parent_segment) *parent_segment = segment;
+
     segment->data_len   = TREE_SEGMENT_DATA_LEN;
     segment->left       = NULL;
     segment->right      = NULL;
+
+    if (parent_segment)
+    {
+        segment->parent = *parent_segment;
+    }
+    else 
+    {
+        segment->parent = nullptr;
+    }
 
     return segment;
 }
@@ -126,21 +145,15 @@ static TreeSegment* find_segment_recursive(TreeSegment* segment, const char* dat
     TreeSegment* ptr = NULL;
     if (!strcmp(segment->data, data))
     {
-        return segment;
+        ptr = segment;
     }
-    if (segment->left)
+    else if (segment->left)
     {
-        if((ptr = find_segment_recursive(segment->left, data)))
-        {
-            return ptr;
-        }
+        ptr = find_segment_recursive(segment->left, data);
     }
-    if (segment->right)
+    else if (segment->right)
     {
-        if((ptr = find_segment_recursive(segment->right, data)))
-        {
-            return ptr;
-        }
+        ptr = find_segment_recursive(segment->right, data);
     }
 
     return ptr;

@@ -12,6 +12,7 @@ struct TreeSegment {
     char* data;
     size_t data_len;
 
+    TreeSegment* parent;
     TreeSegment* left;
     TreeSegment* right;
 };
@@ -27,7 +28,7 @@ treeErrorCode tree_ctor(TreeData* tree);
 
 treeErrorCode tree_dtor(TreeData* tree);
 
-TreeSegment* new_segment(TreeData* tree, treeErrorCode* error = NULL);
+TreeSegment* new_segment(TreeSegment** parent_segment = nullptr, treeErrorCode* error = nullptr);
 
 treeErrorCode del_segment(TreeSegment* segment);
 
