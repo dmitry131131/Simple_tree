@@ -102,11 +102,9 @@ treeErrorCode tree_dump(TreeData* tree)
     assert(tree);
 
     outputBuffer buffer = {};
+    buffer.AUTO_FLUSH = 1;
 
-    buffer_ctor(&buffer, 10000);
-
-    FILE* file = NULL;
-    if (create_output_file(&file, "tree_test.dot", TEXT))
+    if (create_output_file(&(buffer.filePointer), "tree_test.dot", TEXT))
     {
         printf("Create error!\n");
     }
@@ -115,7 +113,7 @@ treeErrorCode tree_dump(TreeData* tree)
     {
         printf("header error!\n");
     }
-
+    
     if (write_dot_body(&buffer, tree))
     {
         printf("body error!\n");
@@ -125,9 +123,7 @@ treeErrorCode tree_dump(TreeData* tree)
 
     printf("%lu\n", buffer.bufferPointer);
 
-    write_buffer_to_file(file, &buffer);
-
-    buffer_dtor(&buffer);
+    write_buffer_to_file(&buffer, buffer.filePointer);
 
     return NO_TREE_ERRORS;
 }
