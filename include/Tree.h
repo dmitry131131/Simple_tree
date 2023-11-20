@@ -51,4 +51,6 @@ treeErrorCode tree_dump(TreeData* tree);
 
 TreeSegment* find_segment(TreeData* tree, const void* data);
 
+treeErrorCode wrire_tree_to_file(const char* filename, TreeData* tree);
+
 #endif

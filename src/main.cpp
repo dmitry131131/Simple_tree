@@ -29,6 +29,8 @@ int main()
         RETURN(error);
     }
 
+    wrire_tree_to_file("hh.txt", &tree);
+
     tree_dump(&tree);
 
     RETURN(0);

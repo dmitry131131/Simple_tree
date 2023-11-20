@@ -12,6 +12,8 @@ static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* dat
 
 static treeErrorCode tree_verify_recurse(TreeSegment* segment);
 
+static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const TreeSegment* segment);
+
 treeErrorCode tree_verify(TreeData* tree)
 {
     assert(tree);
@@ -119,7 +121,7 @@ treeErrorCode tree_dump(TreeData* tree)
     assert(tree);
 
     outputBuffer buffer = {};
-    buffer.AUTO_FLUSH = 1;
+    buffer.AUTO_FLUSH = true;
 
     if (create_output_file(&(buffer.filePointer), "tree_test.dot", TEXT))
     {
@@ -140,7 +142,7 @@ treeErrorCode tree_dump(TreeData* tree)
 
     printf("%lu\n", buffer.bufferPointer);
 
-    write_buffer_to_file(&buffer, buffer.filePointer);
+    write_buffer_to_file(&buffer);
 
     return NO_TREE_ERRORS;
 }
@@ -199,7 +201,64 @@ treeErrorCode wrire_tree_to_file(const char* filename, TreeData* tree)
 {
     assert(tree);
     assert(filename);
+
+    outputBuffer buffer = {};
+    buffer.AUTO_FLUSH = true;
+
+    create_output_file(&buffer.filePointer, filename, TEXT);
+
+    write_tree_to_buffer_recursive(&buffer, tree->root);
     
+    write_buffer_to_file(&buffer);
+    
+    return NO_TREE_ERRORS;
+}
+
+static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const TreeSegment* segment)
+{
+    assert(buffer);
+
+    print_to_buffer(buffer, "( ");
+
+    switch(segment->type)
+    {
+        case TEXT_SEGMENT_DATA:
+            print_to_buffer(buffer, "%s ", segment->data.stringPtr);
+            break;
+        case DOUBLE_SEGMENT_DATA:
+            print_to_buffer(buffer, "%lf ", segment->data.D_number);
+            break;
+        case INTEGER_SEGMENT_DATA:
+            print_to_buffer(buffer, "%d ", segment->data.I_number);
+            break;
+        case NO_TYPE_SEGMENT_DATA:
+            print_to_buffer(buffer, "NONE");
+            break;
+
+        default:
+            break;
+    }
+
+    if (segment->left)
+    {
+        write_tree_to_buffer_recursive(buffer, segment->left);
+    }
+    else
+    {
+        print_to_buffer(buffer, "nil ");
+    }
+
+    if (segment->right)
+    {
+        write_tree_to_buffer_recursive(buffer, segment->right);
+    }
+    else
+    {
+        print_to_buffer(buffer, "nil ");
+    }
+
+    print_to_buffer(buffer, ") ");
+
     return NO_TREE_ERRORS;
 }
 
