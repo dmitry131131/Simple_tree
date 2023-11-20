@@ -20,11 +20,10 @@ treeErrorCode tree_verify(TreeData* tree)
 
     return NO_TREE_ERRORS;
 }
-
+//TODO write verify
 static treeErrorCode tree_verify_recurse(TreeSegment* segment)
 {
-
-    return 
+    
 }
 
 treeErrorCode tree_ctor(TreeData* tree)
@@ -158,3 +157,14 @@ static TreeSegment* find_segment_recursive(TreeSegment* segment, const char* dat
 
     return ptr;
 }
+
+//TODO write function
+treeErrorCode wrire_tree_to_file(const char* filename, TreeData* tree)
+{
+    assert(tree);
+    assert(filename);
+    
+    return NO_TREE_ERRORS;
+}
+
+//TODO write read function
