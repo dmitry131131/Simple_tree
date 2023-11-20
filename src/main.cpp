@@ -19,11 +19,9 @@ int main()
         RETURN(error);
     }
 
-    new_segment(&(tree.root->left), &error);
-    new_segment(&(tree.root->right), &error);
+    TreeSegment* seg = new_segment(DOUBLE_SEGMENT_DATA, sizeof(double), &(tree.root->left), &error);
 
-    new_segment(&(tree.root->right->right), &error);
-    new_segment(&(tree.root->right->left), &error);
+    seg->data.D_number = 8.34;
 
     if (error)
     {

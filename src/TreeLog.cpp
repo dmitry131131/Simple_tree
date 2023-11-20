@@ -34,10 +34,30 @@ treeErrorCode write_dot_body(outputBuffer* buffer, TreeData* tree)
 static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment* segment, TreeSegment* call_segment)
 {
     assert(buffer);
-    
-    print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
-                            "\" {DATA: %s | {<fl> LEFT | <fr> RIGHT}} \"];\n",
-                            segment, segment->data);
+    if (segment->type == TEXT_SEGMENT_DATA)
+    {
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
+                                "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data.stringPtr, segment->type);
+    }
+    else if (segment->type == DOUBLE_SEGMENT_DATA)
+    {
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
+                                "\" {{DATA: %lf | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data.D_number, segment->type);
+    }
+    else if (segment->type == INTEGER_SEGMENT_DATA)
+    {
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
+                                "\" {{DATA: %d | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data.I_number, segment->type);
+    }
+    else 
+    {
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
+                                "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data, segment->type);
+    }
 
     if (segment != call_segment)
     {

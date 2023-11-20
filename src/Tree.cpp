@@ -8,7 +8,7 @@
 #include "DataBuffer.h"
 #include "TreeLog.h"
 
-static TreeSegment* find_segment_recursive(TreeSegment* segment, const char* data);
+static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* data);
 
 static treeErrorCode tree_verify_recurse(TreeSegment* segment);
 
@@ -24,6 +24,8 @@ treeErrorCode tree_verify(TreeData* tree)
 static treeErrorCode tree_verify_recurse(TreeSegment* segment)
 {
     
+
+    return NO_TREE_ERRORS;
 }
 
 treeErrorCode tree_ctor(TreeData* tree)
@@ -31,7 +33,7 @@ treeErrorCode tree_ctor(TreeData* tree)
     assert(tree);
 
     treeErrorCode error = NO_TREE_ERRORS;
-    tree->root = new_segment(nullptr, &error);
+    tree->root = new_segment(NO_TYPE_SEGMENT_DATA, 0, nullptr, &error);
 
     return error;
 }
@@ -46,18 +48,27 @@ treeErrorCode tree_dtor(TreeData* tree)
     return error;
 }
 
-TreeSegment* new_segment(TreeSegment** parent_segment, treeErrorCode* error)
+TreeSegment* new_segment(SegmemtType type, size_t dataLen, TreeSegment** parent_segment, treeErrorCode* error)
 {
     TreeSegment* segment = (TreeSegment*) calloc(1, sizeof(TreeSegment));
-    segment->data = (char*) calloc(TREE_SEGMENT_DATA_LEN, sizeof(char));
-    if (!segment || !segment->data)
+
+    if (!segment)
     {
         if (error) *error = ALLOC_MEMORY_ERROR; 
     }
 
-    if (parent_segment) *parent_segment = segment;
+    if (type == TEXT_SEGMENT_DATA)
+    {
+        segment->data.stringPtr = (char*) calloc(dataLen, sizeof(char));
 
-    segment->data_len   = TREE_SEGMENT_DATA_LEN;
+        if (!segment->data.stringPtr)
+        {
+            if (error) *error = ALLOC_MEMORY_ERROR; 
+        }
+    }
+
+    segment->data_len   = dataLen;
+    segment->type       = type;
     segment->left       = NULL;
     segment->right      = NULL;
 
@@ -69,6 +80,8 @@ TreeSegment* new_segment(TreeSegment** parent_segment, treeErrorCode* error)
     {
         segment->parent = nullptr;
     }
+
+    if (parent_segment) *parent_segment = segment;
 
     return segment;
 }
@@ -91,7 +104,11 @@ treeErrorCode del_segment(TreeSegment* segment)
             return error;
         }
     }
-    free(segment->data);
+    if (segment->type == TEXT_SEGMENT_DATA)
+    {
+        free(segment->data.stringPtr);
+    }
+    
     free(segment);
 
     return error;
@@ -128,25 +145,48 @@ treeErrorCode tree_dump(TreeData* tree)
     return NO_TREE_ERRORS;
 }
 
-TreeSegment* find_segment(TreeData* tree, const char* data)
+TreeSegment* find_segment(TreeData* tree, const void* data)
 {
     assert(tree);
     return find_segment_recursive(tree->root, data);
 }
 
-static TreeSegment* find_segment_recursive(TreeSegment* segment, const char* data)
+static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* data)
 {
     assert(segment);
     TreeSegment* ptr = NULL;
-    if (!strcmp(segment->data, data))
+
+    switch (segment->type)
     {
-        ptr = segment;
+        case TEXT_SEGMENT_DATA:
+            if (!strncmp(segment->data.stringPtr, (const char*) data, segment->data_len))
+            {
+                return segment;
+            }
+            break;
+        case DOUBLE_SEGMENT_DATA:
+            if (segment->data.D_number == *((const double*) data))
+            {
+                return segment;
+            }
+            break;
+        case INTEGER_SEGMENT_DATA:
+            if (segment->data.I_number == *((const int*) data))
+            {
+                return segment;
+            }
+            break;
+
+        case NO_TYPE_SEGMENT_DATA:
+        default:
+            break;
     }
-    else if (segment->left)
+
+    if (segment->left)
     {
         ptr = find_segment_recursive(segment->left, data);
     }
-    else if (segment->right)
+    if (segment->right)
     {
         ptr = find_segment_recursive(segment->right, data);
     }
