@@ -8,26 +8,59 @@
 #include "DataBuffer.h"
 #include "TreeLog.h"
 
+struct SegmentValue {
+    SegmentData data;
+    SegmemtType type;
+    size_t size;
+};
+
 static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* data);
 
 static treeErrorCode tree_verify_recurse(TreeSegment* segment);
 
 static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const TreeSegment* segment);
 
+static SegmentValue get_segment_value(FILE* file);
+
+static TreeSegment* read_tree_from_file_recursive(FILE* file, TreeSegment** par_segment, treeErrorCode* error);
+
 treeErrorCode tree_verify(TreeData* tree)
 {
     assert(tree);
 
+    if (!tree->root)
+    {
+        return TREE_NO_ROOT;
+    }
 
-
-    return NO_TREE_ERRORS;
+    return tree_verify_recurse(tree->root);
 }
-//TODO write verify
+
 static treeErrorCode tree_verify_recurse(TreeSegment* segment)
 {
-    
+    assert(segment);
+    treeErrorCode error = NO_TREE_ERRORS;
 
-    return NO_TREE_ERRORS;
+    if (segment->left)
+    {
+        if ((segment->left)->parent != segment)
+        {
+            return TREE_LINK_ERROR;
+        }
+
+        if ((error = tree_verify_recurse(segment->left))) return error;
+    }
+    if (segment->right)
+    {
+        if ((segment->right)->parent != segment)
+        {
+            return TREE_LINK_ERROR;
+        }
+
+        if ((error = tree_verify_recurse(segment->right))) return error;
+    }
+
+    return error;
 }
 
 treeErrorCode tree_ctor(TreeData* tree)
@@ -178,6 +211,8 @@ static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* dat
                 return segment;
             }
             break;
+        case OP_CODE_SEGMENT_DATA:
+            break;
 
         case NO_TYPE_SEGMENT_DATA:
         default:
@@ -218,7 +253,7 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
 {
     assert(buffer);
 
-    print_to_buffer(buffer, "( ");
+    print_to_buffer(buffer, "(");
 
     switch(segment->type)
     {
@@ -233,6 +268,8 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
             break;
         case NO_TYPE_SEGMENT_DATA:
             print_to_buffer(buffer, "NONE");
+            break;
+        case OP_CODE_SEGMENT_DATA:
             break;
 
         default:
@@ -254,12 +291,127 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
     }
     else
     {
-        print_to_buffer(buffer, "nil ");
+        print_to_buffer(buffer, "nil");
     }
 
-    print_to_buffer(buffer, ") ");
+    print_to_buffer(buffer, ")");
 
     return NO_TREE_ERRORS;
 }
 
 //TODO write read function
+treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
+{
+    assert(tree);
+    assert(filename);
+
+    FILE* file = fopen(filename, "r");
+    treeErrorCode error = NO_TREE_ERRORS;
+
+    tree->root = read_tree_from_file_recursive(file, &tree->root, &error);
+
+    return error;
+}
+
+static TreeSegment* read_tree_from_file_recursive(FILE* file, TreeSegment** par_segment, treeErrorCode* error)
+{
+    assert(file);
+    assert(par_segment);
+
+    TreeSegment* seg = NULL;
+    SegmentValue val = {};
+    char Nil_buffer[30] = {};
+
+    char ch = 0;
+    if ((ch = (char) fgetc(file)) == '(')
+    {
+        printf("Gay!\n");
+        val = get_segment_value(file);
+        seg = new_segment(val.type, val.size, par_segment, error);
+
+        if (val.type == TEXT_SEGMENT_DATA)
+        {
+            fscanf(file, "%s", seg->data.stringPtr);
+            printf("%s\n", seg->data.stringPtr);
+        }
+    }
+    else
+    {
+        if (error) *error = WRONG_TREE_SYNTAX;
+        return NULL;
+    }
+    
+    if ((ch = (char) fgetc(file) == '('))
+    {
+        seg->left = read_tree_from_file_recursive(file, &seg, error);
+    }
+    else
+    {
+        fscanf(file, "%3s", Nil_buffer);
+        printf("%s\n", Nil_buffer);
+        if (!strcmp("nil", Nil_buffer))
+        {
+            seg->left = NULL;
+        }
+        else
+        {
+            if (error) *error = WRONG_TREE_SYNTAX;
+            return NULL;
+        }
+    }
+    
+    if ((ch = (char) fgetc(file) == '('))
+    {
+        seg->right = read_tree_from_file_recursive(file, &seg, error);
+    }
+    else
+    {
+        fscanf(file, "%3s", Nil_buffer);
+        printf("%s\n", Nil_buffer);
+        if (!strcmp("nil", Nil_buffer))
+        {
+            seg->right = NULL;
+        }
+        else
+        {
+            if (error) *error = WRONG_TREE_SYNTAX;
+            return NULL;
+        }
+    }
+    
+    if ((ch = (char) fgetc(file)) == ')')
+    {
+        printf("Sex!\n");
+        return seg;
+    }
+    else
+    {
+        if (error) *error = WRONG_TREE_SYNTAX;
+        return NULL;
+    }
+}
+
+static SegmentValue get_segment_value(FILE* file)
+{
+    assert(file);
+    SegmentValue value;
+
+    if (fscanf(file, "%d", &(value.data.I_number)))
+    {
+        value.type = INTEGER_SEGMENT_DATA;
+        value.size = sizeof(int);
+    }
+    else if (fscanf(file, "%lf", &(value.data.D_number)))
+    {
+        value.type = DOUBLE_SEGMENT_DATA;
+        value.size = sizeof(double);
+    }
+    else
+    {
+        value.data.stringPtr = NULL;
+        value.type = TEXT_SEGMENT_DATA;
+        value.size = TREE_TEXT_SEGMENT_DATA_LEN;
+    }
+
+    return value;
+}

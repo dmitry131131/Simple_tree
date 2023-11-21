@@ -22,8 +22,10 @@ void print_tree_error_message(treeErrorCode error, FILE* stream)
         case NO_TREE_ERRORS:
             break;
 
-        CHECK_CODE(ALLOC_MEMORY_ERROR,          "Error in calloc, alloced memory for buffer!\n");
-
+        CHECK_CODE(ALLOC_MEMORY_ERROR,       "Error in calloc, alloced memory for buffer!\n");
+        CHECK_CODE(TREE_LINK_ERROR,          "Verify error, tree nodes have wronk links!\n");
+        CHECK_CODE(TREE_NO_ROOT,             "Tree hasn't got root!\n");
+        CHECK_CODE(WRONG_TREE_SYNTAX,        "Wrong syntax in file!\n");
 
     default:
         fprintf(stream, "Unknown error!\n");

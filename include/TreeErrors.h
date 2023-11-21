@@ -3,7 +3,10 @@
 
 enum treeErrorCode {
     NO_TREE_ERRORS,
-    ALLOC_MEMORY_ERROR
+    ALLOC_MEMORY_ERROR,
+    TREE_LINK_ERROR,
+    TREE_NO_ROOT,
+    WRONG_TREE_SYNTAX
 };
 
 void print_tree_error(treeErrorCode error);

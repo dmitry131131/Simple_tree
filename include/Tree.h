@@ -53,4 +53,6 @@ TreeSegment* find_segment(TreeData* tree, const void* data);
 
 treeErrorCode wrire_tree_to_file(const char* filename, TreeData* tree);
 
+treeErrorCode read_tree_from_file(TreeData* tree, const char* filename);
+
 #endif
