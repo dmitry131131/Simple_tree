@@ -6,7 +6,11 @@ enum treeErrorCode {
     ALLOC_MEMORY_ERROR,
     TREE_LINK_ERROR,
     TREE_NO_ROOT,
-    WRONG_TREE_SYNTAX
+    WRONG_TREE_SYNTAX,
+    FILE_DESCRIPTOR_ERROR,
+    FILE_SIZE_ERROR,
+    BUFFER_CTOR_ERROR,
+    FILE_READ_ERROR
 };
 
 void print_tree_error(treeErrorCode error);

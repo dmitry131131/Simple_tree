@@ -32,7 +32,7 @@ int main()
 
     wrire_tree_to_file("hh.txt", &tree);
     */
-
+    
     if ((error = read_tree_from_file(&tree, "hh.txt")))
     {
         print_tree_error(error);
