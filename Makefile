@@ -53,7 +53,6 @@ clean :
 	cd lib/Data_buffer && make clean
 	rm $(BuildFolder)/*.o
 	rm $(BuildFolder)/*.a
-	rm $(TARGET)
 
 folder :
 	mkdir -p $(BuildFolder)
