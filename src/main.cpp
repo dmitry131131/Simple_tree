@@ -13,7 +13,7 @@ int main()
     TreeData tree = {};
     treeErrorCode error = NO_TREE_ERRORS;
 
-    /*
+    
     if ((error = tree_ctor(&tree)))
     {
         print_tree_error(error);
@@ -31,14 +31,14 @@ int main()
     }
 
     wrire_tree_to_file("hh.txt", &tree);
-    */
     
+    /*
     if ((error = read_tree_from_file(&tree, "hh.txt")))
     {
         print_tree_error(error);
         RETURN(error);
     }
-
+    */
     tree_dump(&tree);
 
     RETURN(0);

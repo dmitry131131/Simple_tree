@@ -29,7 +29,12 @@ objects = $(patsubst $(SourcePrefix)%.cpp, $(BuildPrefix)%.o, $(Source))
 
 .PHONY : all clean folder release debug
 
-all : prepare folder $(TARGET)
+all : lib
+
+lib : prepare folder $(objects)
+	cd build && ar rc libSimpleTree.a Tree.o TreeErrors.o TreeLog.o
+
+test : prepare folder $(TARGET)
 
 prepare: 
 	cd lib/Color_console_output && make
@@ -47,6 +52,7 @@ clean :
 	cd lib/Color_console_output && make clean
 	cd lib/Data_buffer && make clean
 	rm $(BuildFolder)/*.o
+	rm $(BuildFolder)/*.a
 	rm $(TARGET)
 
 folder :
