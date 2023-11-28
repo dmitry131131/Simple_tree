@@ -256,6 +256,8 @@ treeErrorCode wrire_tree_to_file(const char* filename, TreeData* tree)
     }
     
     write_buffer_to_file(&buffer);
+
+    fclose(buffer.filePointer);
     
     return NO_TREE_ERRORS;
 }
