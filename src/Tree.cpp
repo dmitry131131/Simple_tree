@@ -350,6 +350,7 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
     tree->root = read_tree_from_file_recursive(&treeBuffer, &tree->root, &error);
 
     buffer_dtor(&treeBuffer);
+    fclose(file);
 
     return error;
 }
