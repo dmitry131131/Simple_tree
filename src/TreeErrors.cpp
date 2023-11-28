@@ -30,6 +30,8 @@ void print_tree_error_message(treeErrorCode error, FILE* stream)
         CHECK_CODE(FILE_SIZE_ERROR,          "Wrong file size!\n");
         CHECK_CODE(BUFFER_CTOR_ERROR,        "Error in buffer constructor!\n");
         CHECK_CODE(FILE_READ_ERROR,          "File read error!\n");
+        CHECK_CODE(INPUT_FILE_OPEN_ERROR,    "File read error, wrong filename!\n");
+
 
     default:
         fprintf(stream, "Unknown error!\n");

@@ -313,6 +313,11 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
     FILE* file = fopen(filename, "r");
     treeErrorCode error = NO_TREE_ERRORS;
 
+    if (!file)
+    {
+        return FILE_READ_ERROR;
+    }
+
     struct stat buff = {};
     if (fstat(fileno(file), &buff))
     {
