@@ -246,9 +246,14 @@ treeErrorCode wrire_tree_to_file(const char* filename, TreeData* tree)
     outputBuffer buffer = {};
     buffer.AUTO_FLUSH = true;
 
+    treeErrorCode error = NO_TREE_ERRORS;
+
     create_output_file(&buffer.filePointer, filename, TEXT);
 
-    write_tree_to_buffer_recursive(&buffer, tree->root);
+    if ((error = write_tree_to_buffer_recursive(&buffer, tree->root)))
+    {
+        return error;
+    }
     
     write_buffer_to_file(&buffer);
     
@@ -258,6 +263,11 @@ treeErrorCode wrire_tree_to_file(const char* filename, TreeData* tree)
 static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const TreeSegment* segment)
 {
     assert(buffer);
+
+    if (!segment)
+    {
+        return NULL_SEGMENT_POINTER;
+    }
 
     print_to_buffer(buffer, "(");
 
