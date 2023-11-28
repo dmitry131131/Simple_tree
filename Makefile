@@ -32,7 +32,7 @@ objects = $(patsubst $(SourcePrefix)%.cpp, $(BuildPrefix)%.o, $(Source))
 all : lib
 
 lib : prepare folder $(objects)
-	cd build && ar rc libSimpleTree.a Tree.o TreeErrors.o TreeLog.o
+	cd build && ar rc libSimpleTree.a Tree.o TreeErrors.o TreeLog.o 
 
 test : prepare folder $(TARGET)
 
