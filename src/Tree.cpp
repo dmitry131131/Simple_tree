@@ -125,8 +125,13 @@ TreeSegment* new_segment(SegmemtType type, size_t dataLen, TreeSegment** parent_
 
 treeErrorCode del_segment(TreeSegment* segment)
 {
-    assert(segment);
     treeErrorCode error = NO_TREE_ERRORS;
+
+    if (!segment)
+    {
+        return error;
+    }
+
     if (segment->left) 
     {
         if ((error = del_segment(segment->left)))
