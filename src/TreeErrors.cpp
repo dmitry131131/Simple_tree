@@ -31,6 +31,7 @@ void print_tree_error_message(treeErrorCode error, FILE* stream)
         CHECK_CODE(BUFFER_CTOR_ERROR,        "Error in buffer constructor!\n");
         CHECK_CODE(FILE_READ_ERROR,          "File read error!\n");
         CHECK_CODE(INPUT_FILE_OPEN_ERROR,    "File read error, wrong filename!\n");
+        CHECK_CODE(NULL_SEGMENT_POINTER,     "NULL segment pointer given!!\n");
 
 
     default:

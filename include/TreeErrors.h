@@ -11,7 +11,8 @@ enum treeErrorCode {
     FILE_SIZE_ERROR,
     BUFFER_CTOR_ERROR,
     FILE_READ_ERROR,
-    INPUT_FILE_OPEN_ERROR
+    INPUT_FILE_OPEN_ERROR,
+    NULL_SEGMENT_POINTER
 };
 
 void print_tree_error(treeErrorCode error);
