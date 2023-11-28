@@ -256,6 +256,8 @@ treeErrorCode wrire_tree_to_file(const char* filename, TreeData* tree)
     }
     
     write_buffer_to_file(&buffer);
+
+    fclose(buffer.filePointer);
     
     return NO_TREE_ERRORS;
 }
@@ -350,6 +352,7 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
     tree->root = read_tree_from_file_recursive(&treeBuffer, &tree->root, &error);
 
     buffer_dtor(&treeBuffer);
+    fclose(file);
 
     return error;
 }
