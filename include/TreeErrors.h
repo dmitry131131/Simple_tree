@@ -14,7 +14,8 @@ enum treeErrorCode {
     INPUT_FILE_OPEN_ERROR,
     NULL_SEGMENT_POINTER,
     CREATE_OUTPUT_FILE_ERROR,
-    WRITE_TO_OUTPUT_FILE_ERROR
+    WRITE_TO_OUTPUT_FILE_ERROR,
+    NULL_SEGMENT_DATA_ERROR
 };
 
 void print_tree_error(treeErrorCode error);

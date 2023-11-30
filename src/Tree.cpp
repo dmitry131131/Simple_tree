@@ -127,7 +127,7 @@ treeErrorCode del_segment(TreeSegment* segment)
 
     if (!segment)
     {
-        return error;
+        return NULL_SEGMENT_POINTER;
     }
 
     if (segment->left) 
