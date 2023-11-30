@@ -25,15 +25,22 @@ treeErrorCode write_dot_body(outputBuffer* buffer, TreeData* tree)
 {
     assert(buffer);
     assert(tree);
+    treeErrorCode error = NO_TREE_ERRORS;
 
-    write_dot_elem_recursive(buffer, tree->root, tree->root);
+    error = write_dot_elem_recursive(buffer, tree->root, tree->root);
 
-    return NO_TREE_ERRORS;
+    return error;
 }
 
 static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment* segment, TreeSegment* call_segment)
 {
     assert(buffer);
+
+    if (!segment)
+    {
+        return NULL_SEGMENT_POINTER;
+    }
+
     if (segment->type == TEXT_SEGMENT_DATA)
     {
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
