@@ -304,6 +304,7 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
     if (segment->left)
     {
         write_tree_to_buffer_recursive(buffer, segment->left);
+        print_to_buffer(buffer, " ");
     }
     else
     {
@@ -319,7 +320,7 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
         print_to_buffer(buffer, "nil");
     }
 
-    print_to_buffer(buffer, ") ");
+    print_to_buffer(buffer, ")");
 
     return NO_TREE_ERRORS;
 }
