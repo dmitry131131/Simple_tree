@@ -12,7 +12,9 @@ enum treeErrorCode {
     BUFFER_CTOR_ERROR,
     FILE_READ_ERROR,
     INPUT_FILE_OPEN_ERROR,
-    NULL_SEGMENT_POINTER
+    NULL_SEGMENT_POINTER,
+    CREATE_OUTPUT_FILE_ERROR,
+    WRITE_TO_OUTPUT_FILE_ERROR
 };
 
 void print_tree_error(treeErrorCode error);

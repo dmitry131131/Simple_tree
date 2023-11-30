@@ -159,32 +159,41 @@ treeErrorCode del_segment(TreeSegment* segment)
 treeErrorCode tree_dump(TreeData* tree)
 {
     assert(tree);
+    #define CHECK_FUNCTION_WORK(funk) do{       \
+        if ((error = funk))                     \
+        {                                       \
+            print_tree_error(error);            \
+            return error;                       \
+        }                                       \
+    }while(0)
 
     outputBuffer buffer = {};
     buffer.AUTO_FLUSH = true;
 
+    treeErrorCode error = NO_TREE_ERRORS;
+
     if (create_output_file(&(buffer.filePointer), "tree_test.dot", TEXT))
     {
-        printf("Create error!\n");
+        print_tree_error(CREATE_OUTPUT_FILE_ERROR);
+        return CREATE_OUTPUT_FILE_ERROR;
     }
 
-    if (write_dot_header(&buffer))
-    {
-        printf("header error!\n");
-    }
+    CHECK_FUNCTION_WORK(write_dot_header(&buffer));
     
-    if (write_dot_body(&buffer, tree))
-    {
-        printf("body error!\n");
-    }
+    CHECK_FUNCTION_WORK(write_dot_body(&buffer, tree));
 
-    write_dot_footer(&buffer, tree);
+    CHECK_FUNCTION_WORK(write_dot_footer(&buffer, tree));
 
     printf("%lu\n", buffer.bufferPointer);
 
-    write_buffer_to_file(&buffer);
+    if (write_buffer_to_file(&buffer))
+    {
+        print_tree_error(WRITE_TO_OUTPUT_FILE_ERROR);
+        return WRITE_TO_OUTPUT_FILE_ERROR;
+    }
 
     return NO_TREE_ERRORS;
+    #undef CHECK_FUNCTION_WORK
 }
 
 TreeSegment* find_segment(TreeData* tree, const void* data)
