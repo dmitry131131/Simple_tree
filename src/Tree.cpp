@@ -118,8 +118,6 @@ TreeSegment* new_segment(SegmemtType type, size_t dataLen, TreeSegment** parent_
         segment->parent = nullptr;
     }
 
-    if (parent_segment) *parent_segment = segment;
-
     return segment;
 }
 
