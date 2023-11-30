@@ -356,6 +356,11 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
         return FILE_READ_ERROR;
     }
 
+    if (!tree->root)
+    {
+        tree->root = new_segment(TEXT_SEGMENT_DATA, TREE_TEXT_SEGMENT_DATA_LEN, tree->root, &error);
+    }
+
     tree->root = read_tree_from_file_recursive(&treeBuffer, tree->root, &error);
 
     buffer_dtor(&treeBuffer);
@@ -367,7 +372,6 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
 static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegment* par_segment, treeErrorCode* error)
 {
     assert(buffer);
-    assert(par_segment);
 
     TreeSegment* seg = NULL;
     SegmentValue val = {};
