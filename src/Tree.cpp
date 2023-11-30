@@ -24,7 +24,7 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
 
 static SegmentValue get_segment_value(outputBuffer* buffer);
 
-static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegment** par_segment, treeErrorCode* error);
+static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegment* par_segment, treeErrorCode* error);
 
 treeErrorCode tree_verify(TreeData* tree)
 {
@@ -85,7 +85,7 @@ treeErrorCode tree_dtor(TreeData* tree)
     return error;
 }
 
-TreeSegment* new_segment(SegmemtType type, size_t dataLen, TreeSegment** parent_segment, treeErrorCode* error)
+TreeSegment* new_segment(SegmemtType type, size_t dataLen, TreeSegment* parent_segment, treeErrorCode* error)
 {
     TreeSegment* segment = (TreeSegment*) calloc(1, sizeof(TreeSegment));
 
@@ -111,7 +111,7 @@ TreeSegment* new_segment(SegmemtType type, size_t dataLen, TreeSegment** parent_
 
     if (parent_segment)
     {
-        segment->parent = *parent_segment;
+        segment->parent = parent_segment;
     }
     else 
     {
@@ -356,7 +356,7 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
         return FILE_READ_ERROR;
     }
 
-    tree->root = read_tree_from_file_recursive(&treeBuffer, &tree->root, &error);
+    tree->root = read_tree_from_file_recursive(&treeBuffer, tree->root, &error);
 
     buffer_dtor(&treeBuffer);
     fclose(file);
@@ -364,7 +364,7 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
     return error;
 }
 
-static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegment** par_segment, treeErrorCode* error)
+static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegment* par_segment, treeErrorCode* error)
 {
     assert(buffer);
     assert(par_segment);
@@ -401,7 +401,7 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
     
     if (((char) buffer->customBuffer[buffer->bufferPointer]) == '(')
     {
-        seg->left = read_tree_from_file_recursive(buffer, &seg->left, error);
+        seg->left = read_tree_from_file_recursive(buffer, seg, error);
     }
     else
     {
@@ -422,7 +422,7 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
     
     if (((char) buffer->customBuffer[buffer->bufferPointer]) == '(')
     {
-        seg->right = read_tree_from_file_recursive(buffer, &seg->right, error);
+        seg->right = read_tree_from_file_recursive(buffer, seg, error);
     }
     else
     {

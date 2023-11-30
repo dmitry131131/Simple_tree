@@ -43,7 +43,7 @@ treeErrorCode tree_ctor(TreeData* tree);
 
 treeErrorCode tree_dtor(TreeData* tree);
 
-TreeSegment* new_segment(SegmemtType type, size_t dataLen, TreeSegment** parent_segment = nullptr, treeErrorCode* error = nullptr);
+TreeSegment* new_segment(SegmemtType type, size_t dataLen, TreeSegment* parent_segment = nullptr, treeErrorCode* error = nullptr);
 
 treeErrorCode del_segment(TreeSegment* segment);
 
