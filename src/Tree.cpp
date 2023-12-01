@@ -404,6 +404,7 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
     else
     {
         if (error) *error = WRONG_TREE_SYNTAX;
+        del_segment(seg);
         return NULL;
     }
     
@@ -424,6 +425,7 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
         else
         {
             if (error) *error = WRONG_TREE_SYNTAX;
+            del_segment(seg);
             return NULL;
         }
     }
@@ -445,6 +447,7 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
         else
         {
             if (error) *error = WRONG_TREE_SYNTAX;
+            del_segment(seg);
             return NULL;
         }
     }
@@ -457,6 +460,7 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
     else
     {
         if (error) *error = WRONG_TREE_SYNTAX;
+        del_segment(seg);
         return NULL;
     }
 }
