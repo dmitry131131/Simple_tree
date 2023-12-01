@@ -357,9 +357,12 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
         return FILE_READ_ERROR;
     }
 
-    if (!tree->root)
+    if (tree->root)
     {
-        tree->root = new_segment(TEXT_SEGMENT_DATA, TREE_TEXT_SEGMENT_DATA_LEN, tree->root, &error);
+        if ((error = tree_dtor(tree)))
+        {
+            return error;
+        }
     }
 
     tree->root = read_tree_from_file_recursive(&treeBuffer, tree->root, &error);
