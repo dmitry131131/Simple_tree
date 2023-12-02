@@ -94,16 +94,6 @@ TreeSegment* new_segment(SegmemtType type, size_t dataLen, TreeSegment* parent_s
         if (error) *error = ALLOC_MEMORY_ERROR; 
     }
 
-    if (type == TEXT_SEGMENT_DATA)
-    {
-        segment->data.stringPtr = (char*) calloc(dataLen, sizeof(char));
-
-        if (!segment->data.stringPtr)
-        {
-            if (error) *error = ALLOC_MEMORY_ERROR; 
-        }
-    }
-
     segment->data_len   = dataLen;
     segment->type       = type;
     segment->left       = NULL;
@@ -373,7 +363,6 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
     return error;
 }
 
-//TODO make scanf("%ms")
 static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegment* par_segment, treeErrorCode* error)
 {
     assert(buffer);
@@ -392,8 +381,10 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
         if (val.type == TEXT_SEGMENT_DATA)
         {
             int count_of_symb = 0;
-            sscanf(buffer->customBuffer + buffer->bufferPointer, "%s%n", seg->data.stringPtr, &count_of_symb);
+            sscanf(buffer->customBuffer + buffer->bufferPointer, "%ms%n", &(seg->data.stringPtr), &count_of_symb);
             buffer->bufferPointer += (size_t) count_of_symb;
+
+            seg->data_len = (size_t) count_of_symb;
 
             (buffer->bufferPointer)++;
         }
