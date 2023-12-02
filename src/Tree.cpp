@@ -26,6 +26,8 @@ static SegmentValue get_segment_value(outputBuffer* buffer);
 
 static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegment* par_segment, treeErrorCode* error);
 
+static void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, treeErrorCode* error);
+
 treeErrorCode tree_verify(TreeData* tree)
 {
     assert(tree);
@@ -515,7 +517,7 @@ treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src)
     return NO_TREE_ERRORS;
 }
 
-void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, treeErrorCode* error)
+static void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, treeErrorCode* error)
 {
     assert(buffer);
     if (!segment)

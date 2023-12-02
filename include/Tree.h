@@ -7,7 +7,6 @@
 
 #include "config.h"
 #include "TreeErrors.h"
-#include "DataBuffer.h"
 
 enum SegmemtType {
     NO_TYPE_SEGMENT_DATA,
@@ -58,5 +57,4 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename);
 
 treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src);
 
-void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, treeErrorCode* error);
 #endif
