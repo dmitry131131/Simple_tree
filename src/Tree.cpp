@@ -494,7 +494,8 @@ treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src)
             free(dest->data.stringPtr);
         }  
 
-        dest->data.stringPtr = (char*) calloc(src->data_len, sizeof(char));
+        dest->data.stringPtr = (char*) calloc(src->data_len + 1, sizeof(char));
+        strncpy(dest->data.stringPtr, src->data.stringPtr, src->data_len);
         dest->data_len = src->data_len;
 
         break;
@@ -534,19 +535,17 @@ static void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, 
     (buffer->bufferPointer)++;
 
     size_t count = 0;
-    while ((buffer->customBuffer[buffer->bufferPointer] != '\"') && buffer->customBuffer[buffer->bufferPointer] != '\0')
+    while ((buffer->customBuffer[buffer->bufferPointer + count] != '\"') && buffer->customBuffer[buffer->bufferPointer + count] != '\0')
     {
         count++;
-        (buffer->bufferPointer)++;
     }
-    buffer->bufferPointer -= count;
 
     (segment->data).stringPtr = (char*) calloc(count + 1, sizeof(char));
     segment->data_len = count;
 
     for (size_t i = 0; i < count; i++)
     {
-        (segment->data).stringPtr[i] = (buffer->customBuffer)[buffer->bufferPointer + i];
+        (segment->data).stringPtr[i] = (buffer->customBuffer)[buffer->bufferPointer];
         (buffer->bufferPointer)++;
     }
     (buffer->bufferPointer)++;
