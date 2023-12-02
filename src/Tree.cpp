@@ -478,3 +478,44 @@ static SegmentValue get_segment_value(outputBuffer* buffer)
 
     return value;
 }
+
+treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src)
+{
+    assert(dest);
+    assert(src);
+
+    if (dest->type != src->type)
+    {
+        return DIFFERENT_SEGMENT_TYPES;
+    }
+
+    switch (dest->type)
+    {
+    case TEXT_SEGMENT_DATA:
+        if (dest->data.stringPtr)
+        {
+            free(dest->data.stringPtr);
+        }  
+
+        dest->data.stringPtr = (char*) calloc(src->data_len, sizeof(char));
+        dest->data_len = src->data_len;
+
+        break;
+    case DOUBLE_SEGMENT_DATA:
+        dest->data.D_number = src->data.D_number;
+        break;
+    case INTEGER_SEGMENT_DATA:
+        dest->data.I_number = src->data.I_number;
+        break;
+    case OP_CODE_SEGMENT_DATA:
+        dest->data.I_number = src->data.I_number;
+        break;
+
+    case NO_TYPE_SEGMENT_DATA:
+        break;
+    default:
+        break;
+    }
+
+    return NO_TREE_ERRORS;
+}

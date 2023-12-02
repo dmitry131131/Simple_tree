@@ -35,6 +35,7 @@ void print_tree_error_message(treeErrorCode error, FILE* stream)
         CHECK_CODE(CREATE_OUTPUT_FILE_ERROR,    "Error in creating output file!\n");
         CHECK_CODE(WRITE_TO_OUTPUT_FILE_ERROR,  "Error in writing to output file!\n");
         CHECK_CODE(NULL_SEGMENT_DATA_ERROR,     "NULL segment data error!\n");
+        CHECK_CODE(DIFFERENT_SEGMENT_TYPES,     "Different segment types!\n");
 
     default:
         fprintf(stream, "Unknown error!\n");

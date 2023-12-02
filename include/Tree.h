@@ -55,4 +55,6 @@ treeErrorCode wrire_tree_to_file(const char* filename, TreeData* tree);
 
 treeErrorCode read_tree_from_file(TreeData* tree, const char* filename);
 
+treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src);
+
 #endif
