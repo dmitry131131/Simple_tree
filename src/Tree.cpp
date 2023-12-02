@@ -237,7 +237,7 @@ static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* dat
     {
         ptr = find_segment_recursive(segment->left, data);
     }
-    if (segment->right)
+    if (segment->right && (!ptr))
     {
         ptr = find_segment_recursive(segment->right, data);
     }
@@ -365,7 +365,7 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
         }
     }
 
-    tree->root = read_tree_from_file_recursive(&treeBuffer, tree->root, &error);
+    tree->root = read_tree_from_file_recursive(&treeBuffer, nullptr, &error);
 
     buffer_dtor(&treeBuffer);
     fclose(file);
@@ -373,6 +373,7 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
     return error;
 }
 
+//TODO make scanf("%ms")
 static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegment* par_segment, treeErrorCode* error)
 {
     assert(buffer);
