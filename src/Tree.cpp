@@ -273,7 +273,7 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
     switch(segment->type)
     {
         case TEXT_SEGMENT_DATA:
-            print_to_buffer(buffer, "%s ", segment->data.stringPtr);
+            print_to_buffer(buffer, "\"%s\" ", segment->data.stringPtr);
             break;
         case DOUBLE_SEGMENT_DATA:
             print_to_buffer(buffer, "%lf ", segment->data.D_number);
@@ -380,12 +380,7 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
 
         if (val.type == TEXT_SEGMENT_DATA)
         {
-            int count_of_symb = 0;
-            sscanf(buffer->customBuffer + buffer->bufferPointer, "%ms%n", &(seg->data.stringPtr), &count_of_symb);
-            buffer->bufferPointer += (size_t) count_of_symb;
-
-            seg->data_len = (size_t) count_of_symb;
-
+            read_string_from_buffer(buffer, seg, error);
             (buffer->bufferPointer)++;
         }
         else
@@ -518,4 +513,39 @@ treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src)
     }
 
     return NO_TREE_ERRORS;
+}
+
+void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, treeErrorCode* error)
+{
+    assert(buffer);
+    if (!segment)
+    {
+        if (error) *error = NULL_SEGMENT_POINTER;
+        return ;
+    }
+
+    if (buffer->customBuffer[buffer->bufferPointer] != '\"')
+    {
+        if (error) *error = WRONG_TREE_SYNTAX;
+        return ;
+    }
+    (buffer->bufferPointer)++;
+
+    size_t count = 0;
+    while ((buffer->customBuffer[buffer->bufferPointer] != '\"') && buffer->customBuffer[buffer->bufferPointer] != '\0')
+    {
+        count++;
+        (buffer->bufferPointer)++;
+    }
+    buffer->bufferPointer -= count;
+
+    (segment->data).stringPtr = (char*) calloc(count + 1, sizeof(char));
+    segment->data_len = count;
+
+    for (size_t i = 0; i < count; i++)
+    {
+        (segment->data).stringPtr[i] = (buffer->customBuffer)[buffer->bufferPointer + i];
+        (buffer->bufferPointer)++;
+    }
+    (buffer->bufferPointer)++;
 }
