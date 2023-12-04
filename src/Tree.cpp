@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <assert.h>
+#include <math.h>
 
 #include "TreeErrors.h"
 #include "Tree.h"
@@ -15,6 +16,8 @@ struct SegmentValue {
     SegmemtType type;
     size_t size;
 };
+
+static bool is_equal(const double first, const double second);
 
 static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* data);
 
@@ -206,7 +209,7 @@ static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* dat
             }
             break;
         case DOUBLE_SEGMENT_DATA:
-            if (segment->data.D_number == *((const double*) data))
+            if (is_equal(segment->data.D_number, *((const double*) data)))
             {
                 return segment;
             }
@@ -339,7 +342,7 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename)
 
     outputBuffer treeBuffer;
 
-    if (buffer_ctor(&treeBuffer, buff.st_size))
+    if (buffer_ctor(&treeBuffer, (size_t) buff.st_size))
     {
         return BUFFER_CTOR_ERROR;
     }
@@ -549,4 +552,9 @@ static void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, 
         (buffer->bufferPointer)++;
     }
     (buffer->bufferPointer)++;
+}
+
+static bool is_equal(const double first, const double second)
+{
+    return fabs(first - second) < D_EPSILON;
 }
