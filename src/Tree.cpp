@@ -188,12 +188,14 @@ treeErrorCode tree_dump(TreeData* tree)
         RETURN(WRITE_TO_OUTPUT_FILE_ERROR);
     }
 
-    if (system("dot dump.dot -Tpng dump.png"))
+    fclose(buffer.filePointer);
+
+    if (system("dot dump.dot -Tpng -o dump.png"))
     {
-        RETURN(NO_GRAPHVIZ_LIB_ERROR);
+        print_tree_error(NO_GRAPHVIZ_LIB_ERROR);                 
+        return NO_GRAPHVIZ_LIB_ERROR;  
     }
 
-    fclose(buffer.filePointer);
     return NO_TREE_ERRORS;
 
     #undef CHECK_FUNCTION_WORK
