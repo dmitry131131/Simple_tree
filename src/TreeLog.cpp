@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <string.h>
 #include <assert.h>
 
 #include "TreeErrors.h"
@@ -7,6 +8,8 @@
 #include "TreeLog.h"
 
 static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment* segment, TreeSegment* call_segment);
+
+static treeErrorCode write_command_by_opcode(char** str, OpCodes code);
 
 treeErrorCode write_dot_header(outputBuffer* buffer)
 {
@@ -55,11 +58,14 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
                                 "\" {{DATA: %lf | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, segment->data.D_number, segment->type);
     }
-    else if (segment->type == INTEGER_SEGMENT_DATA)
+    else if (segment->type == OP_CODE_SEGMENT_DATA)
     {
+        char opCode[TREE_TEXT_SEGMENT_DATA_LEN] = {};
+        write_command_by_opcode((char**) &opCode, segment->data.I_number);
+
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
-                                "\" {{DATA: %d | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
-                                segment, segment->data.I_number, segment->type);
+                                "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, opCode, segment->type);
     }
     else 
     {
@@ -104,6 +110,44 @@ treeErrorCode write_dot_footer(outputBuffer* buffer, TreeData* tree)
     print_to_buffer(buffer, "All:<f1> -> %lu [color = \"#000000\"];\n", tree->root);
 
     print_to_buffer(buffer, "}");
+
+    return NO_TREE_ERRORS;
+}
+
+static treeErrorCode write_command_by_opcode(char** str, OpCodes code)
+{
+    assert(str);
+
+    switch (code)
+    {
+    case NONE:
+        strncpy(*str, "NONE", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    case PLUS:
+        strncpy(*str, "+", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    case MINUS:
+        strncpy(*str, "-", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    case MUL:
+        strncpy(*str, "*", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    case DIV:
+        strncpy(*str, "/", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    case SIN:
+        strncpy(*str, "sin", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    case COS:
+        strncpy(*str, "cos", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    case TAN:
+        strncpy(*str, "tan", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    
+    default:
+        break;
+    }
 
     return NO_TREE_ERRORS;
 }

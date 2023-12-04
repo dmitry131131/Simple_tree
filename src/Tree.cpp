@@ -31,6 +31,8 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
 
 static void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, treeErrorCode* error);
 
+static void read_op_code_from_buffer(outputBuffer* buffer, TreeSegment* segment, treeErrorCode* error);
+
 treeErrorCode tree_verify(TreeData* tree)
 {
     assert(tree);
@@ -225,13 +227,11 @@ static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* dat
                 return segment;
             }
             break;
-        case INTEGER_SEGMENT_DATA:
+        case OP_CODE_SEGMENT_DATA:
             if (segment->data.I_number == *((const int*) data))
             {
                 return segment;
             }
-            break;
-        case OP_CODE_SEGMENT_DATA:
             break;
 
         case NO_TYPE_SEGMENT_DATA:
@@ -294,13 +294,11 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
         case DOUBLE_SEGMENT_DATA:
             print_to_buffer(buffer, "%lf ", segment->data.D_number);
             break;
-        case INTEGER_SEGMENT_DATA:
-            print_to_buffer(buffer, "%d ", segment->data.I_number);
+        case OP_CODE_SEGMENT_DATA:
+            print_to_buffer(buffer, "\'%c\'", segment->data.I_number);
             break;
         case NO_TYPE_SEGMENT_DATA:
             print_to_buffer(buffer, "NONE ");
-            break;
-        case OP_CODE_SEGMENT_DATA:
             break;
 
         default:
@@ -399,6 +397,11 @@ static TreeSegment* read_tree_from_file_recursive(outputBuffer* buffer, TreeSegm
             read_string_from_buffer(buffer, seg, error);
             (buffer->bufferPointer)++;
         }
+        else if (val.type == OP_CODE_SEGMENT_DATA)
+        {
+            read_op_code_from_buffer(buffer, seg, error);
+            (buffer->bufferPointer)++;
+        }
         else
         {
             seg->data = val.data;
@@ -479,6 +482,11 @@ static SegmentValue get_segment_value(outputBuffer* buffer)
         value.type = DOUBLE_SEGMENT_DATA;
         value.size = sizeof(double);
     }
+    else if (buffer->bufferPointer[buffer->customBuffer] == '\'')
+    {
+        value.type = OP_CODE_SEGMENT_DATA;
+        value.size = sizeof(OpCodes);
+    }
     else
     {
         value.data.stringPtr = NULL;
@@ -516,9 +524,6 @@ treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src)
     case DOUBLE_SEGMENT_DATA:
         dest->data.D_number = src->data.D_number;
         break;
-    case INTEGER_SEGMENT_DATA:
-        dest->data.I_number = src->data.I_number;
-        break;
     case OP_CODE_SEGMENT_DATA:
         dest->data.I_number = src->data.I_number;
         break;
@@ -554,6 +559,12 @@ static void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, 
         count++;
     }
 
+    if (buffer->customBuffer[buffer->bufferPointer + count] != '\"')
+    {
+        if (error) *error = WRONG_TREE_SYNTAX;
+        return ;
+    }
+
     (segment->data).stringPtr = (char*) calloc(count + 1, sizeof(char));
     segment->data_len = count;
 
@@ -563,6 +574,55 @@ static void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, 
         (buffer->bufferPointer)++;
     }
     (buffer->bufferPointer)++;
+}
+
+static void read_op_code_from_buffer(outputBuffer* buffer, TreeSegment* segment, treeErrorCode* error)
+{
+    assert(buffer);
+    if (!segment)
+    {
+        if (error) *error = NULL_SEGMENT_POINTER;
+        return ;
+    }
+
+    if (buffer->customBuffer[buffer->bufferPointer] != '\'')
+    {
+        if (error) *error = WRONG_TREE_SYNTAX;
+        return ;
+    }
+    (buffer->bufferPointer)++;
+
+    size_t count = 0;
+    while ((buffer->customBuffer[buffer->bufferPointer + count] != '\'') && buffer->customBuffer[buffer->bufferPointer + count] != '\0')
+    {
+        count++;
+    }
+
+    if (buffer->customBuffer[buffer->bufferPointer + count] != '\'')
+    {
+        if (error) *error = WRONG_TREE_SYNTAX;
+        return ;
+    }
+
+    char* opCode = (char*) calloc(count + 1, sizeof(char));
+
+    for (size_t i = 0; i < count; i++)
+    {
+        opCode[i] = (buffer->customBuffer)[buffer->bufferPointer];
+        (buffer->bufferPointer)++;
+    }
+    (buffer->bufferPointer)++;
+
+    if      (!strcmp("+", opCode))   segment->data.I_number = PLUS;
+    else if (!strcmp("-", opCode))   segment->data.I_number = MINUS;
+    else if (!strcmp("*", opCode))   segment->data.I_number = MUL;
+    else if (!strcmp("/", opCode))   segment->data.I_number = DIV;
+    else if (!strcmp("sin", opCode)) segment->data.I_number = SIN;
+    else if (!strcmp("cos", opCode)) segment->data.I_number = COS;
+    else if (!strcmp("tan", opCode)) segment->data.I_number = TAN;
+    else segment->data.I_number = NONE;
+
+    free(opCode);
 }
 
 static bool is_equal(const double first, const double second)
