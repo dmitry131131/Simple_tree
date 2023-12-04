@@ -41,6 +41,8 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
         return NULL_SEGMENT_POINTER;
     }
 
+    treeErrorCode error = NO_TREE_ERRORS;
+
     if (segment->type == TEXT_SEGMENT_DATA)
     {
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
@@ -80,14 +82,14 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
 
     if (segment->left)
     {
-        write_dot_elem_recursive(buffer, segment->left, segment);
+        error = write_dot_elem_recursive(buffer, segment->left, segment);
     }
     if (segment->right)
     {
-        write_dot_elem_recursive(buffer, segment->right, segment);
+        error = write_dot_elem_recursive(buffer, segment->right, segment);
     }
 
-    return NO_TREE_ERRORS;
+    return error;
 }
 
 treeErrorCode write_dot_footer(outputBuffer* buffer, TreeData* tree)

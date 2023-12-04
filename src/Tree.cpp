@@ -181,8 +181,6 @@ treeErrorCode tree_dump(TreeData* tree)
 
     CHECK_FUNCTION_WORK(write_dot_footer(&buffer, tree));
 
-    printf("%lu\n", buffer.bufferPointer);
-
     if (write_buffer_to_file(&buffer))
     {
         RETURN(WRITE_TO_OUTPUT_FILE_ERROR);
