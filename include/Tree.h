@@ -23,7 +23,9 @@ enum OpCodes {
     DIV,
     SIN,
     COS,
-    TAN
+    TAN,
+    OBR,
+    CBR
 };
 
 union SegmentData {
