@@ -10,7 +10,7 @@ void print_tree_error(treeErrorCode error)
 
 void print_tree_error_message(treeErrorCode error, FILE* stream)
 {
-    color_fprintf(stream, COLOR_RED, STYLE_BOLD, "Data Buffer error: ");
+    color_fprintf(stream, COLOR_RED, STYLE_BOLD, "Tree error: ");
 
     #define CHECK_CODE(code, message)               \
         case code:                                  \
@@ -36,6 +36,8 @@ void print_tree_error_message(treeErrorCode error, FILE* stream)
         CHECK_CODE(WRITE_TO_OUTPUT_FILE_ERROR,  "Error in writing to output file!\n");
         CHECK_CODE(NULL_SEGMENT_DATA_ERROR,     "NULL segment data error!\n");
         CHECK_CODE(DIFFERENT_SEGMENT_TYPES,     "Different segment types!\n");
+        CHECK_CODE(NO_GRAPHVIZ_LIB_ERROR,       "No graphvis lib on your computer, install!\n");
+
 
     default:
         fprintf(stream, "Unknown error!\n");

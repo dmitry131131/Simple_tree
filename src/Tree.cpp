@@ -152,11 +152,16 @@ treeErrorCode del_segment(TreeSegment* segment)
 treeErrorCode tree_dump(TreeData* tree)
 {
     assert(tree);
+    #define RETURN(code) do{                    \
+        print_tree_error(code);                 \
+        fclose(buffer.filePointer);             \
+        return code;                            \
+    }while(0)
+
     #define CHECK_FUNCTION_WORK(funk) do{       \
         if ((error = funk))                     \
         {                                       \
-            print_tree_error(error);            \
-            return error;                       \
+            RETURN(error);                      \
         }                                       \
     }while(0)
 
@@ -165,10 +170,9 @@ treeErrorCode tree_dump(TreeData* tree)
 
     treeErrorCode error = NO_TREE_ERRORS;
 
-    if (create_output_file(&(buffer.filePointer), "tree_test.dot", TEXT))
+    if (create_output_file(&(buffer.filePointer), "dump.dot", TEXT))
     {
-        print_tree_error(CREATE_OUTPUT_FILE_ERROR);
-        return CREATE_OUTPUT_FILE_ERROR;
+        RETURN(CREATE_OUTPUT_FILE_ERROR);
     }
 
     CHECK_FUNCTION_WORK(write_dot_header(&buffer));
@@ -181,12 +185,19 @@ treeErrorCode tree_dump(TreeData* tree)
 
     if (write_buffer_to_file(&buffer))
     {
-        print_tree_error(WRITE_TO_OUTPUT_FILE_ERROR);
-        return WRITE_TO_OUTPUT_FILE_ERROR;
+        RETURN(WRITE_TO_OUTPUT_FILE_ERROR);
     }
 
+    if (system("dot dump.dot -Tpng dump.png"))
+    {
+        RETURN(NO_GRAPHVIZ_LIB_ERROR);
+    }
+
+    fclose(buffer.filePointer);
     return NO_TREE_ERRORS;
+
     #undef CHECK_FUNCTION_WORK
+    #undef RETURN
 }
 
 TreeSegment* find_segment(TreeData* tree, const void* data)
