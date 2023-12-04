@@ -9,7 +9,7 @@
 
 static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment* segment, TreeSegment* call_segment);
 
-static treeErrorCode write_command_by_opcode(char** str, OpCodes code);
+static treeErrorCode write_command_by_opcode(char (*str)[TREE_TEXT_SEGMENT_DATA_LEN], OpCodes code);
 
 treeErrorCode write_dot_header(outputBuffer* buffer)
 {
@@ -61,7 +61,7 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
     else if (segment->type == OP_CODE_SEGMENT_DATA)
     {
         char opCode[TREE_TEXT_SEGMENT_DATA_LEN] = {};
-        write_command_by_opcode((char**) &opCode, segment->data.I_number);
+        write_command_by_opcode(&opCode, segment->data.I_number);
 
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
                                 "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
@@ -114,7 +114,7 @@ treeErrorCode write_dot_footer(outputBuffer* buffer, TreeData* tree)
     return NO_TREE_ERRORS;
 }
 
-static treeErrorCode write_command_by_opcode(char** str, OpCodes code)
+static treeErrorCode write_command_by_opcode(char (*str)[TREE_TEXT_SEGMENT_DATA_LEN], OpCodes code)
 {
     assert(str);
 
