@@ -228,7 +228,13 @@ static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* dat
             }
             break;
         case OP_CODE_SEGMENT_DATA:
-            if (segment->data.I_number == *((const int*) data))
+            if (segment->data.Op_code == *((const int*) data))
+            {
+                return segment;
+            }
+            break;
+        case VAR_SEGMENT_DATA:
+            if (segment->data.Var == *((const int*) data))
             {
                 return segment;
             }
@@ -295,7 +301,10 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
             print_to_buffer(buffer, "%lf ", segment->data.D_number);
             break;
         case OP_CODE_SEGMENT_DATA:
-            print_to_buffer(buffer, "\'%c\'", segment->data.I_number);
+            print_to_buffer(buffer, "\'%c\'", segment->data.Op_code);
+            break;
+        case VAR_SEGMENT_DATA:
+            print_to_buffer(buffer, "~%c~", segment->data.Var);
             break;
         case NO_TYPE_SEGMENT_DATA:
             print_to_buffer(buffer, "NONE ");
@@ -525,7 +534,10 @@ treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src)
         dest->data.D_number = src->data.D_number;
         break;
     case OP_CODE_SEGMENT_DATA:
-        dest->data.I_number = src->data.I_number;
+        dest->data.Op_code = src->data.Op_code;
+        break;
+    case VAR_SEGMENT_DATA:
+        dest->data.Var = src->data.Var;
         break;
 
     case NO_TYPE_SEGMENT_DATA:
@@ -613,14 +625,14 @@ static void read_op_code_from_buffer(outputBuffer* buffer, TreeSegment* segment,
     }
     (buffer->bufferPointer)++;
 
-    if      (!strcmp("+", opCode))   segment->data.I_number = PLUS;
-    else if (!strcmp("-", opCode))   segment->data.I_number = MINUS;
-    else if (!strcmp("*", opCode))   segment->data.I_number = MUL;
-    else if (!strcmp("/", opCode))   segment->data.I_number = DIV;
-    else if (!strcmp("sin", opCode)) segment->data.I_number = SIN;
-    else if (!strcmp("cos", opCode)) segment->data.I_number = COS;
-    else if (!strcmp("tan", opCode)) segment->data.I_number = TAN;
-    else segment->data.I_number = NONE;
+    if      (!strcmp("+", opCode))   segment->data.Op_code = PLUS;
+    else if (!strcmp("-", opCode))   segment->data.Op_code = MINUS;
+    else if (!strcmp("*", opCode))   segment->data.Op_code = MUL;
+    else if (!strcmp("/", opCode))   segment->data.Op_code = DIV;
+    else if (!strcmp("sin", opCode)) segment->data.Op_code = SIN;
+    else if (!strcmp("cos", opCode)) segment->data.Op_code = COS;
+    else if (!strcmp("tan", opCode)) segment->data.Op_code = TAN;
+    else segment->data.Op_code = NONE;
 
     free(opCode);
 }

@@ -61,11 +61,17 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
     else if (segment->type == OP_CODE_SEGMENT_DATA)
     {
         char opCode[TREE_TEXT_SEGMENT_DATA_LEN] = {};
-        write_command_by_opcode(&opCode, segment->data.I_number);
+        write_command_by_opcode(&opCode, segment->data.Op_code);
 
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
                                 "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, opCode, segment->type);
+    }
+    else if (segment->type == VAR_SEGMENT_DATA)
+    {
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
+                                "\" {{DATA: x | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->type);
     }
     else 
     {
@@ -143,6 +149,12 @@ static treeErrorCode write_command_by_opcode(char (*str)[TREE_TEXT_SEGMENT_DATA_
         break;
     case TAN:
         strncpy(*str, "tan", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    case OBR:
+        strncpy(*str, "obr", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
+    case CBR:
+        strncpy(*str, "cbr", TREE_TEXT_SEGMENT_DATA_LEN);
         break;
     
     default:

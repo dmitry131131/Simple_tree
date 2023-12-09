@@ -12,7 +12,8 @@ enum SegmemtType {
     NO_TYPE_SEGMENT_DATA,
     TEXT_SEGMENT_DATA,
     DOUBLE_SEGMENT_DATA,
-    OP_CODE_SEGMENT_DATA
+    OP_CODE_SEGMENT_DATA,
+    VAR_SEGMENT_DATA
 };
 
 enum OpCodes {
@@ -31,7 +32,8 @@ enum OpCodes {
 union SegmentData {
     char*   stringPtr;
     double  D_number;
-    OpCodes I_number;
+    OpCodes Op_code;
+    int     Var;
 };
 
 struct TreeSegment {
