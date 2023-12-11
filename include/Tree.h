@@ -26,7 +26,8 @@ enum OpCodes {
     COS,
     TAN,
     OBR,
-    CBR
+    CBR,
+    POW
 };
 
 union SegmentData {
