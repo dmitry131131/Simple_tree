@@ -156,6 +156,9 @@ static treeErrorCode write_command_by_opcode(char (*str)[TREE_TEXT_SEGMENT_DATA_
     case CBR:
         strncpy(*str, "cbr", TREE_TEXT_SEGMENT_DATA_LEN);
         break;
+    case POW:
+        strncpy(*str, "^", TREE_TEXT_SEGMENT_DATA_LEN);
+        break;
     
     default:
         break;
