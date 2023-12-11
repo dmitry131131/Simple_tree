@@ -37,9 +37,10 @@ union SegmentData {
 };
 
 struct TreeSegment {
-    SegmentData data;
-    size_t data_len;
-    SegmemtType type;
+    SegmentData  data;
+    size_t       data_len;
+    SegmemtType  type;
+    size_t       weight;
 
     TreeSegment* parent;
     TreeSegment* left;
