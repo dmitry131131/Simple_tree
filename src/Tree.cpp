@@ -549,6 +549,33 @@ treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src)
     return NO_TREE_ERRORS;
 }
 
+treeErrorCode copy_subtree(const TreeSegment* src, TreeSegment** dest)
+{
+    assert(src);
+    assert(dest);
+    treeErrorCode error = NO_TREE_ERRORS;
+
+    *dest = new_segment(src->type, src->data_len, *dest, &error);
+    if (error) return error;
+
+    if (src->left)
+    {
+        if ((error = copy_subtree(src->left, &((*dest)->left))))
+        {
+            return error;
+        }
+    }
+    if (src->right)
+    {
+        if ((error = copy_subtree(src->right, &((*dest)->right))))
+        {
+            return error;
+        }
+    }
+
+    return error;
+}
+
 static void read_string_from_buffer(outputBuffer* buffer, TreeSegment* segment, treeErrorCode* error)
 {
     assert(buffer);
