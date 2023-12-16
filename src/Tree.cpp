@@ -557,6 +557,9 @@ treeErrorCode copy_subtree(const TreeSegment* src, TreeSegment** dest)
 
     *dest = new_segment(src->type, src->data_len, *dest, &error);
     if (error) return error;
+    (*dest)->data   = src->data;
+    (*dest)->type   = src->type;
+    (*dest)->weight = src->weight;
 
     if (src->left)
     {
