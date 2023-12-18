@@ -74,6 +74,6 @@ treeErrorCode read_tree_from_file(TreeData* tree, const char* filename);
 
 treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src);
 
-treeErrorCode copy_subtree(const TreeSegment* src, TreeSegment** dest, TreeSegment* parent);
+treeErrorCode copy_subtree(const TreeSegment* src, TreeSegment** dest, TreeSegment* parent = nullptr);
 
 #endif
