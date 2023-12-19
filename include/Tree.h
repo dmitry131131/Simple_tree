@@ -13,7 +13,40 @@ enum SegmemtType {
     TEXT_SEGMENT_DATA,
     DOUBLE_SEGMENT_DATA,
     OP_CODE_SEGMENT_DATA,
-    VAR_SEGMENT_DATA
+    VAR_SEGMENT_DATA,
+
+    IDENTIFIER,
+    KEYWORD,
+    FUNCTION_DEFINITION,
+    PARAMETERS,
+    VAR_DECLARATION,
+    CALL
+};
+
+enum KeyWords {
+    KEY_IF          = 11,
+    KEY_WHILE       = 12,
+    KEY_ASSIGMENT   = 13,
+    KEY_SIN         = 21,
+    KEY_COS         = 22,
+    KEY_FLOOR       = 23,
+    KEY_PLUS        = 24,
+    KEY_MINUS       = 25,
+    KEY_MUL         = 26,
+    KEY_DIV         = 27,
+    KEY_DIFF        = 28,
+    KEY_EQUAL       = 31,
+    KEY_LESS        = 32,
+    KEY_MORE        = 33,
+    KEY_LESS_EQUAL  = 34,
+    KEY_MORE_EQUAL  = 35,
+    KEY_NOT_EQUAL   = 36,
+    KEY_AND         = 37,
+    KEY_OR          = 38,
+    KEY_NOT         = 39,
+    KEY_NEXT        = 41,
+    KEY_ENUM        = 42,
+    KEY_NUMBER      = 51
 };
 
 enum OpCodes {
@@ -36,6 +69,7 @@ union SegmentData {
     double  D_number;
     OpCodes Op_code;
     int     Var;
+    int     K_word;
 };
 
 struct TreeSegment {

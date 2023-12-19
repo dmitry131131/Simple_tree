@@ -141,7 +141,8 @@ treeErrorCode del_segment(TreeSegment* segment)
             return error;
         }
     }
-    if (segment->type == TEXT_SEGMENT_DATA)
+    if (segment->type == TEXT_SEGMENT_DATA || segment->type == IDENTIFIER || segment->type == FUNCTION_DEFINITION 
+     || segment->type == VAR_DECLARATION)
     {
         free(segment->data.stringPtr);
     }
@@ -213,7 +214,7 @@ static TreeSegment* find_segment_recursive(TreeSegment* segment, const void* dat
     assert(segment);
     TreeSegment* ptr = NULL;
 
-    switch (segment->type)
+    switch ((int) segment->type)
     {
         case TEXT_SEGMENT_DATA:
             if (!strncmp(segment->data.stringPtr, (const char*) data, segment->data_len))
@@ -292,7 +293,7 @@ static treeErrorCode write_tree_to_buffer_recursive(outputBuffer* buffer, const 
 
     print_to_buffer(buffer, "(");
 
-    switch(segment->type)
+    switch((int) segment->type)
     {
         case TEXT_SEGMENT_DATA:
             print_to_buffer(buffer, "\"%s\" ", segment->data.stringPtr);
@@ -517,7 +518,7 @@ treeErrorCode copy_segment(TreeSegment* dest, const TreeSegment* src)
         return DIFFERENT_SEGMENT_TYPES;
     }
 
-    switch (dest->type)
+    switch ((int) dest->type)
     {
     case TEXT_SEGMENT_DATA:
         if (dest->data.stringPtr)
