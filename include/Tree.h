@@ -65,11 +65,11 @@ enum OpCodes {
 };
 
 union SegmentData {
-    char*   stringPtr;
-    double  D_number;
-    OpCodes Op_code;
-    int     Var;
-    int     K_word;
+    char*       stringPtr;
+    double      D_number;
+    OpCodes     Op_code;
+    int         Var;
+    KeyWords    K_word;
 };
 
 struct TreeSegment {
