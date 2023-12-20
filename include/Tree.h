@@ -46,7 +46,12 @@ enum KeyWords {
     KEY_NOT         = 39,
     KEY_NEXT        = 41,
     KEY_ENUM        = 42,
-    KEY_NUMBER      = 51
+    KEY_NUMBER      = 51,
+    KEY_DEF         = 52,
+    KEY_OBR         = 1,
+    KEY_CBR         = 2,
+    KEY_O_CURBR     = 3,
+    KEY_C_CURBR     = 4
 };
 
 enum OpCodes {
