@@ -70,7 +70,7 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
     else if (segment->type == IDENTIFIER || segment->type == VAR_DECLARATION || segment->type == FUNCTION_DEFINITION)
     {
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
-                                "\" {{DATA: %lf | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                "\" {{DATA: %lu | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, segment->data.Id, segment->type);
     }
     else if (segment->type == VAR_SEGMENT_DATA)
