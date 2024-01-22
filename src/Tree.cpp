@@ -173,7 +173,9 @@ treeErrorCode tree_dump(TreeData* tree)
 
     treeErrorCode error = NO_TREE_ERRORS;
 
-    if (create_output_file(&(buffer.filePointer), "dump.dot", TEXT))
+    system("mkdir -p temp");
+
+    if (create_output_file(&(buffer.filePointer), "temp/dump.dot", TEXT))
     {
         RETURN(CREATE_OUTPUT_FILE_ERROR);
     }
@@ -191,7 +193,7 @@ treeErrorCode tree_dump(TreeData* tree)
 
     fclose(buffer.filePointer);
 
-    if (system("dot dump.dot -Tpng -o dump.png"))
+    if (system("dot temp/dump.dot -Tpng -o dump.png"))
     {
         print_tree_error(NO_GRAPHVIZ_LIB_ERROR);                 
         return NO_GRAPHVIZ_LIB_ERROR;  
