@@ -141,8 +141,7 @@ treeErrorCode del_segment(TreeSegment* segment)
             return error;
         }
     }
-    if (segment->type == TEXT_SEGMENT_DATA || segment->type == IDENTIFIER || segment->type == FUNCTION_DEFINITION 
-     || segment->type == VAR_DECLARATION)
+    if (segment->type == TEXT_SEGMENT_DATA)
     {
         free(segment->data.stringPtr);
     }
