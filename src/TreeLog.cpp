@@ -46,8 +46,7 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
 
     treeErrorCode error = NO_TREE_ERRORS;
 
-    if (segment->type == TEXT_SEGMENT_DATA || segment->type == IDENTIFIER || segment->type == FUNCTION_DEFINITION 
-    ||  segment->type == VAR_DECLARATION)
+    if (segment->type == TEXT_SEGMENT_DATA)
     {
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
                                 "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
@@ -67,6 +66,12 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
                                 "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, opCode, segment->type);
+    }
+    else if (segment->type == IDENTIFIER || segment->type == VAR_DECLARATION || segment->type == FUNCTION_DEFINITION)
+    {
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
+                                "\" {{DATA: %lf | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data.Id, segment->type);
     }
     else if (segment->type == VAR_SEGMENT_DATA)
     {

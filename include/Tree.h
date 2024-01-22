@@ -79,6 +79,7 @@ union SegmentData {
     double      D_number;
     OpCodes     Op_code;
     int         Var;
+    size_t      Id;
     KeyWords    K_word;
 };
 
