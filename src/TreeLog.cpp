@@ -46,56 +46,71 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
 
     treeErrorCode error = NO_TREE_ERRORS;
 
-    if (segment->type == TEXT_SEGMENT_DATA)
+    switch (segment->type)
     {
+    case TEXT_SEGMENT_DATA:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
                                 "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, segment->data.stringPtr, segment->type);
-    }
-    else if (segment->type == DOUBLE_SEGMENT_DATA)
-    {
+        break;
+    case DOUBLE_SEGMENT_DATA:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
-                                "\" {{DATA: %lf | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
-                                segment, segment->data.D_number, segment->type);
-    }
-    else if (segment->type == OP_CODE_SEGMENT_DATA)
-    {
-        char opCode[TREE_TEXT_SEGMENT_DATA_LEN] = {};
-        write_command_by_opcode(&opCode, segment->data.Op_code);
+                                "\" {{DATA: %lf | TYPE: Number(2)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data.D_number);
+        break;    
+    case OP_CODE_SEGMENT_DATA:
+        {
+            char opCode[TREE_TEXT_SEGMENT_DATA_LEN] = {};
+            write_command_by_opcode(&opCode, segment->data.Op_code);
 
-        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
-                                "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
-                                segment, opCode, segment->type);
-    }
-    else if (segment->type == IDENTIFIER || segment->type == VAR_DECLARATION || segment->type == FUNCTION_DEFINITION)
-    {
-        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1fcf2593\", color = \"#800000\", label = "
-                                "\" {{DATA: %lu | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
-                                segment, segment->data.Id, segment->type);
-    }
-    else if (segment->type == VAR_SEGMENT_DATA)
-    {
+            print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
+                                    "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                    segment, opCode, segment->type);
+        }
+        break;
+    case VAR_SEGMENT_DATA:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
                                 "\" {{DATA: x | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, segment->type);
-    }
-    else if (segment->type == KEYWORD)
-    {
+        break;
+    
+    case IDENTIFIER:
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1fcf2593\", color = \"#800000\", label = "
+                                "\" {{DATA: %lu | TYPE: Identifier(5)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data.Id);
+        break;
+    case KEYWORD:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#a32e9793\", color = \"#800000\", label = "
-                                "\" {{DATA: %d | TYPE: KEYWORD} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                "\" {{DATA: %d | TYPE: KEYWORD(6)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, segment->data.K_word);
-    }
-    else if (segment->type == PARAMETERS || segment->type == CALL)
-    {
+        break;
+    case FUNCTION_DEFINITION:
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1fcf2593\", color = \"#800000\", label = "
+                                "\" {{DATA: %lu | TYPE: Function definition(7)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data.Id);
+        break;
+    case PARAMETERS:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1743b393\", color = \"#800000\", label = "
-                                "\" {{DATA: NONE | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
-                                segment, segment->type);
-    }
-    else 
-    {
+                                "\" {{DATA: NONE | TYPE: Parameters(8)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment);
+        break;
+    case VAR_DECLARATION:
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1fcf2593\", color = \"#800000\", label = "
+                                "\" {{DATA: %lu | TYPE: Var declaration(9)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data.Id);
+        break;
+    case CALL:
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1743b393\", color = \"#800000\", label = "
+                                "\" {{DATA: NONE | TYPE: Call(10)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment);
+        break;
+
+    case NO_TYPE_SEGMENT_DATA:
+    default:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#FFF5EE\", color = \"#800000\", label = "
                                 "\" {{DATA: %s | TYPE: %d} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, segment->data, segment->type);
+        break;
     }
 
     if (segment != call_segment)
