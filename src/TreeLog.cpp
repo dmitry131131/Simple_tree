@@ -8,8 +8,9 @@
 #include "TreeLog.h"
 
 static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment* segment, TreeSegment* call_segment);
-
 static treeErrorCode write_command_by_opcode(char (*str)[TREE_TEXT_SEGMENT_DATA_LEN], OpCodes code);
+static void dump_key_word(outputBuffer* buffer, TreeSegment* segment);
+static const char* write_key_word_by_code(KeyWords K_word);
 
 treeErrorCode write_dot_header(outputBuffer* buffer)
 {
@@ -75,33 +76,31 @@ static treeErrorCode write_dot_elem_recursive(outputBuffer* buffer, TreeSegment*
         break;
     
     case IDENTIFIER:
-        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1fcf2593\", color = \"#800000\", label = "
-                                "\" {{DATA: %lu | TYPE: Identifier(5)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#d19e1b93\", color = \"#800000\", label = "
+                                "\" {{DATA: %lu | TYPE: ID(5)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, segment->data.Id);
         break;
     case KEYWORD:
-        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#a32e9793\", color = \"#800000\", label = "
-                                "\" {{DATA: %d | TYPE: KEYWORD(6)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
-                                segment, segment->data.K_word);
+        dump_key_word(buffer, segment);
         break;
     case FUNCTION_DEFINITION:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1fcf2593\", color = \"#800000\", label = "
-                                "\" {{DATA: %lu | TYPE: Function definition(7)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                "\" {{DATA: %lu | TYPE: FUNCTION DEF(7)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, segment->data.Id);
         break;
     case PARAMETERS:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1743b393\", color = \"#800000\", label = "
-                                "\" {{DATA: NONE | TYPE: Parameters(8)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                "\" {{DATA: NONE | TYPE: PARAMETERS(8)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment);
         break;
     case VAR_DECLARATION:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1fcf2593\", color = \"#800000\", label = "
-                                "\" {{DATA: %lu | TYPE: Var declaration(9)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                "\" {{DATA: %lu | TYPE: VAR DECLARATION(9)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment, segment->data.Id);
         break;
     case CALL:
         print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#1743b393\", color = \"#800000\", label = "
-                                "\" {{DATA: NONE | TYPE: Call(10)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                "\" {{DATA: NONE | TYPE: CALL(10)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
                                 segment);
         break;
 
@@ -201,4 +200,101 @@ static treeErrorCode write_command_by_opcode(char (*str)[TREE_TEXT_SEGMENT_DATA_
     }
 
     return NO_TREE_ERRORS;
+}
+
+static void dump_key_word(outputBuffer* buffer, TreeSegment* segment)
+{
+    assert(buffer);
+    assert(segment);
+
+    switch ((size_t) segment->data.K_word)
+    {
+    case KEY_NEXT:
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#fa7f7f93\", color = \"#800000\", label = "
+                                "\" {{DATA: %s | TYPE: KEYWORD(6)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, write_key_word_by_code(segment->data.K_word));
+        break;
+    
+    default:
+        print_to_buffer(buffer, "%lu [shape = Mrecord, style = filled, fillcolor = \"#a32e9793\", color = \"#800000\", label = "
+                                "\" {{DATA: %d | TYPE: KEYWORD(6)} | {<fl> LEFT | <fr> RIGHT}} \"];\n",
+                                segment, segment->data.K_word);
+        break;
+    }
+}
+
+static const char* write_key_word_by_code(KeyWords K_word)
+{
+    switch (K_word)
+    {
+    case KEY_IF:
+        return "if";
+    case KEY_WHILE:
+        return "while";
+    case KEY_ASSIGMENT:
+        return "=";
+    case KEY_SIN:
+        return "sin";
+    case KEY_COS:
+        return "cos";
+    case KEY_FLOOR:
+        return "floor";
+    case KEY_PLUS:
+        return "+";
+    case KEY_MINUS:
+        return "-";
+    case KEY_MUL:
+        return "*";
+    case KEY_DIV:
+        return "/";
+    case KEY_DIFF:
+        return "diffetent";
+    case KEY_EQUAL:
+        return "==";
+    case KEY_LESS:
+        return "Less";
+    case KEY_MORE:
+        return "More";
+    case KEY_LESS_EQUAL:
+        return "Less || Equal";
+    case KEY_MORE_EQUAL:
+        return "More || Equal";
+    case KEY_NOT_EQUAL:
+        return "Not equal";
+    case KEY_AND:
+        return "&&";
+    case KEY_OR: 
+        return "||";
+    case KEY_NOT:       
+        return "!";
+    case KEY_NEXT:      
+        return ";";
+    case KEY_ENUM:     
+        return ",";
+    case KEY_NUMBER:    
+        return "number(int)";
+    case KEY_DEF:   
+        return "def";
+    case KEY_IN:      
+        return "in";
+    case KEY_OUT:       
+        return "out";
+    case KEY_RETURN:    
+        return "return";
+    case KEY_BREAK:     
+        return "break";
+    case KEY_CONTINUE:  
+        return "continue";
+    case KEY_OBR:      
+        return "(";
+    case KEY_CBR:      
+        return ")";
+    case KEY_O_CURBR:  
+        return "{";
+    case KEY_C_CURBR: 
+        return "}";
+    
+    default:
+        return "????";
+    }
 }
