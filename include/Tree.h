@@ -35,6 +35,7 @@ enum KeyWords {
     KEY_MUL         = 26,
     KEY_DIV         = 27,
     KEY_DIFF        = 28,
+    KEY_SQRT        = 29,
     KEY_EQUAL       = 31,
     KEY_LESS        = 32,
     KEY_MORE        = 33,
