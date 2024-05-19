@@ -237,6 +237,8 @@ static const char* write_key_word_by_code(KeyWords K_word)
         return "sin";
     case KEY_COS:
         return "cos";
+    case KEY_SQRT:
+        return "sqrt";
     case KEY_FLOOR:
         return "floor";
     case KEY_PLUS:
